@@ -11,8 +11,10 @@ public class Hello extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.setContentType("text/html");
+        resp.setCharacterEncoding("UTF-8");
         PrintWriter writer = resp.getWriter();
-        writer.write("Hello, World!");
+        writer.write("<p><span style='color: blue;'>Привет, мир!</span></p>");
     }
 
 }

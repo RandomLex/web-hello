@@ -14,10 +14,13 @@ public final class ApplicationUtils {
     private ApplicationUtils() {
     }
 
-    public static List<Teacher> getTeachers(HttpServletRequest req) {
+    public static InMemoryDatabase getDb(HttpServletRequest req) {
         ServletContext servletContext = req.getServletContext();
-        InMemoryDatabase db = (InMemoryDatabase) servletContext.getAttribute(DB);
-        return db.getTeachers();
+        return (InMemoryDatabase) servletContext.getAttribute(DB);
+    }
+
+    public static List<Teacher> getTeachers(HttpServletRequest req) {
+        return getDb(req).getTeachers();
     }
 
     public static void initTeachersToContext(ServletConfig config) {

@@ -2,6 +2,7 @@ package com.barzykin;
 
 import com.barzykin.model.Teacher;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,14 +23,16 @@ public class TeacherServlet extends AbstractHtmlUtf8Servlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         super.doGet(req, resp);
+        include(req, resp);
         PrintWriter writer = resp.getWriter();
 
         List<Teacher> teachers = getTeachers(req);
         String name = req.getParameter(NAME);
-        if (name == null) {
-            printInfoAboutAllTeacher(writer, teachers);
-        } else {
+
+        if (name != null) {
             printInfoAboutOneTeacher(writer, name, findTeacherByName(teachers, name));
+        } else {
+            writer.write("Не указно имя преподавателя");
         }
     }
 
@@ -44,19 +47,17 @@ public class TeacherServlet extends AbstractHtmlUtf8Servlet {
         List<Teacher> teachers = getTeachers(req);
         teachers.add(teacher);
 
-        PrintWriter writer = resp.getWriter();
-        writer.write("A new teacher is: " + teacher);
+//        resp.sendRedirect(req.getServerName() + ":" + req.getServerPort() + "/first");
+//        resp.sendRedirect("localhost:8080/first");
+//        resp.sendRedirect("gmail.com");
+        RequestDispatcher dispatcher = req.getServletContext().getRequestDispatcher("/teachers");
+        dispatcher.forward(req, resp);
     }
 
     private Optional<Teacher> findTeacherByName(List<Teacher> teachers, String name) {
         return teachers.stream()
                 .filter(teacher -> name.equals(teacher.getName()))
                 .findAny();
-    }
-
-    private void printInfoAboutAllTeacher(PrintWriter writer, List<Teacher> teachers) {
-        teachers
-                .forEach(teacher -> writer.write(teacher.toString() + "<p>"));
     }
 
     private void printInfoAboutOneTeacher(PrintWriter writer, String name, Optional<Teacher> teacherOptional) {
